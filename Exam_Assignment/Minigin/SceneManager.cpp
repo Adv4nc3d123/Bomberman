@@ -3,17 +3,17 @@
 #include "Scene.h"
 
 
-void dae::SceneManager::Update()
+void dae::SceneManager::Update(const float deltaTime)
 {
-	for(auto scene : mScenes)
+	for(auto scene : m_SceneVec)
 	{
-		scene->Update();
+		scene->Update(deltaTime);
 	}
 }
 
 void dae::SceneManager::Render()
 {
-	for (const auto scene : mScenes)
+	for (const auto scene : m_SceneVec)
 	{
 		scene->Render();
 	}
@@ -22,6 +22,6 @@ void dae::SceneManager::Render()
 dae::Scene& dae::SceneManager::CreateScene(const std::string& name)
 {
 	const auto scene = std::shared_ptr<Scene>(new Scene(name));
-	mScenes.push_back(scene);
+	m_SceneVec.push_back(scene);
 	return *scene;
 }

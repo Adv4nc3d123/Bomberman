@@ -1,15 +1,19 @@
 #include "MiniginPCH.h"
 #include "Minigin.h"
-#include <chrono>
 #include <thread>
 #include "InputManager.h"
 #include "SceneManager.h"
 #include "Renderer.h"
 #include "ResourceManager.h"
 #include <SDL.h>
-#include "TextObject.h"
 #include "GameObject.h"
 #include "Scene.h"
+#include "FPS_Counter.h"
+#include "TurnLeftCommand.h"
+#include "Actor.h"
+#include "TurnDownCommand.h"
+#include "TurnRightCommand.h"
+#include "TurnUpCommand.h"
 
 
 void dae::Minigin::Initialize()
@@ -23,15 +27,14 @@ void dae::Minigin::Initialize()
 		"Programming 4 assignment",
 		SDL_WINDOWPOS_UNDEFINED,
 		SDL_WINDOWPOS_UNDEFINED,
-		640,
-		480,
+		608,
+		704,
 		SDL_WINDOW_OPENGL
 	);
 	if (window == nullptr) 
 	{
 		throw std::runtime_error(std::string("SDL_CreateWindow Error: ") + SDL_GetError());
 	}
-
 	Renderer::GetInstance().Init(window);
 }
 
@@ -40,21 +43,8 @@ void dae::Minigin::Initialize()
  */
 void dae::Minigin::LoadGame() const
 {
-	auto& scene = SceneManager::GetInstance().CreateScene("Demo");
+	auto& scene = SceneManager::GetInstance().CreateScene("test");
 
-	auto go = std::make_shared<GameObject>();
-	go->SetTexture("background.jpg");
-	scene.Add(go);
-
-	go = std::make_shared<GameObject>();
-	go->SetTexture("logo.png");
-	go->SetPosition(216, 180);
-	scene.Add(go);
-
-	auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 36);
-	auto to = std::make_shared<TextObject>("Programming 4 Assignment", font);
-	to->SetPosition(80, 20);
-	scene.Add(to);
 }
 
 void dae::Minigin::Cleanup()
@@ -68,6 +58,7 @@ void dae::Minigin::Cleanup()
 void dae::Minigin::Run()
 {
 	Initialize();
+	m_T1 = std::chrono::high_resolution_clock::now();
 
 	// tell the resource manager where he can find the game data
 	ResourceManager::GetInstance().Init("../Data/");
@@ -75,23 +66,58 @@ void dae::Minigin::Run()
 	LoadGame();
 
 	{
-		auto t = std::chrono::high_resolution_clock::now();
 		auto& renderer = Renderer::GetInstance();
 		auto& sceneManager = SceneManager::GetInstance();
 		auto& input = InputManager::GetInstance();
-
 		bool doContinue = true;
 		while (doContinue)
 		{
+			auto t2 = std::chrono::high_resolution_clock::now();
+			auto timeSpan = std::chrono::duration_cast<std::chrono::duration<double>>(t2 - m_T1);
+			float deltaTime = (float)timeSpan.count();
+
+			//otherwise actor could jump to impossible locations after a breakpoint or huge timegap
+			const float maxDelta{ 0.1f };
+			deltaTime = min(deltaTime, maxDelta);
+			m_T1 = t2;
+
 			doContinue = input.ProcessInput();
 
-			sceneManager.Update();
+
+			
+			sceneManager.Update(deltaTime);;
 			renderer.Render();
 
-			t += std::chrono::milliseconds(msPerFrame);
-			std::this_thread::sleep_until(t);
 		}
 	}
 
 	Cleanup();
+}
+
+void dae::Minigin::LoadCommands(const std::shared_ptr<Actor>& actor) const
+{
+	//get input manager instance
+	auto& input = InputManager::GetInstance();
+
+	//***SETTING DIRECTION***
+	//controllerbutton commands
+	input.SetCommand(ControllerButton::DpadLeft, new TurnLeftCommand(actor));
+	input.SetCommand(ControllerButton::DpadDown, new TurnDownCommand(actor));
+	input.SetCommand(ControllerButton::DpadRight, new TurnRightCommand(actor));
+	input.SetCommand(ControllerButton::DpadUp, new TurnUpCommand(actor));
+
+	//wasd commands
+	input.SetCommand(SDLK_a, new TurnLeftCommand(actor));
+	input.SetCommand(SDLK_s, new TurnDownCommand(actor));
+	input.SetCommand(SDLK_d, new TurnRightCommand(actor));
+	input.SetCommand(SDLK_w, new TurnUpCommand(actor));
+
+	//arrow commands
+	input.SetCommand(SDLK_LEFT, new TurnLeftCommand(actor));
+	input.SetCommand(SDLK_DOWN, new TurnDownCommand(actor));
+	input.SetCommand(SDLK_RIGHT, new TurnRightCommand(actor));
+	input.SetCommand(SDLK_UP, new TurnUpCommand(actor));
+
+	//***ACTIONS***
+
 }

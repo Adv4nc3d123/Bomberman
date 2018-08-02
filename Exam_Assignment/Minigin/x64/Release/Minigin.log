@@ -1,0 +1,24 @@
+﻿  Actor.cpp
+  Command.cpp
+  Component.cpp
+  Enemy.cpp
+  FPS_Counter.cpp
+  GameObject.cpp
+  Health.cpp
+  HitBoxComponent.cpp
+  ImageComponent.cpp
+  InputManager.cpp
+  Level.cpp
+  Main.cpp
+  Minigin.cpp
+c:\users\bramd\source\repos\bomberman\exam_assignment\minigin\minigin.cpp(46): error C2220: warning treated as error - no 'object' file generated
+c:\users\bramd\source\repos\bomberman\exam_assignment\minigin\minigin.cpp(46): warning C4189: 'scene': local variable is initialized but not referenced
+  Scene.cpp
+  SceneManager.cpp
+  Score.cpp
+  Tile.cpp
+  TurnDownCommand.cpp
+  TurnLeftCommand.cpp
+  TurnRightCommand.cpp
+  Compiling...
+  TurnUpCommand.cpp
