@@ -1,24 +1,20 @@
 ﻿  Actor.cpp
-  Command.cpp
-  Component.cpp
-  Enemy.cpp
-  FPS_Counter.cpp
-  GameObject.cpp
-  Health.cpp
-  HitBoxComponent.cpp
-  ImageComponent.cpp
-  InputManager.cpp
-  Level.cpp
-  Main.cpp
-  Minigin.cpp
-c:\users\bramd\source\repos\bomberman\exam_assignment\minigin\minigin.cpp(46): error C2220: warning treated as error - no 'object' file generated
-c:\users\bramd\source\repos\bomberman\exam_assignment\minigin\minigin.cpp(46): warning C4189: 'scene': local variable is initialized but not referenced
-  Scene.cpp
-  SceneManager.cpp
-  Score.cpp
-  Tile.cpp
-  TurnDownCommand.cpp
-  TurnLeftCommand.cpp
-  TurnRightCommand.cpp
-  Compiling...
-  TurnUpCommand.cpp
+     Creating library C:\Users\bramd\source\repos\Bomberman\Exam_Assignment\x64\Release\Minigin.lib and object C:\Users\bramd\source\repos\Bomberman\Exam_Assignment\x64\Release\Minigin.exp
+  Generating code
+  12 of 1299 functions ( 0.9%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    5 functions had inline decision re-evaluated but remain unchanged
+  Finished generating code
+  Minigin.vcxproj -> C:\Users\bramd\source\repos\Bomberman\Exam_Assignment\x64\Release\Minigin.exe
+  C:\Users\bramd\source\repos\Bomberman\Exam_Assignment\3rdParty\SDL2\lib\x64\SDL2.dll
+  1 File(s) copied
+  C:\Users\bramd\source\repos\Bomberman\Exam_Assignment\3rdParty\SDL2_image\lib\x64\libjpeg-9.dll
+  C:\Users\bramd\source\repos\Bomberman\Exam_Assignment\3rdParty\SDL2_image\lib\x64\libpng16-16.dll
+  C:\Users\bramd\source\repos\Bomberman\Exam_Assignment\3rdParty\SDL2_image\lib\x64\libtiff-5.dll
+  C:\Users\bramd\source\repos\Bomberman\Exam_Assignment\3rdParty\SDL2_image\lib\x64\libwebp-7.dll
+  C:\Users\bramd\source\repos\Bomberman\Exam_Assignment\3rdParty\SDL2_image\lib\x64\SDL2_image.dll
+  C:\Users\bramd\source\repos\Bomberman\Exam_Assignment\3rdParty\SDL2_image\lib\x64\zlib1.dll
+  6 File(s) copied
+  C:\Users\bramd\source\repos\Bomberman\Exam_Assignment\3rdParty\SDL2_ttf\lib\x64\libfreetype-6.dll
+  C:\Users\bramd\source\repos\Bomberman\Exam_Assignment\3rdParty\SDL2_ttf\lib\x64\SDL2_ttf.dll
+  2 File(s) copied

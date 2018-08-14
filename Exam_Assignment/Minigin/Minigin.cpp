@@ -11,9 +11,12 @@
 #include "FPS_Counter.h"
 #include "TurnLeftCommand.h"
 #include "Actor.h"
+#include "Level.h"
+#include "Tile.h"
 #include "TurnDownCommand.h"
 #include "TurnRightCommand.h"
 #include "TurnUpCommand.h"
+#include "BombCommand.h"
 
 
 void dae::Minigin::Initialize()
@@ -24,12 +27,12 @@ void dae::Minigin::Initialize()
 	}
 
 	window = SDL_CreateWindow(
-		"Programming 4 assignment",
+		"Bomberman - Bram Dewachter 2DAE01",
 		SDL_WINDOWPOS_UNDEFINED,
 		SDL_WINDOWPOS_UNDEFINED,
-		608,
-		704,
-		SDL_WINDOW_OPENGL
+		720,
+		624,
+		SDL_WINDOW_OPENGL 
 	);
 	if (window == nullptr) 
 	{
@@ -44,6 +47,29 @@ void dae::Minigin::Initialize()
 void dae::Minigin::LoadGame() const
 {
 	auto& scene = SceneManager::GetInstance().CreateScene("test");
+
+	//get window size
+	int width = 0;
+	int height = 0;
+	SDL_GetWindowSize(window, &width, &height);
+
+	//FPS_Counter
+	auto FPS_Counter = std::make_shared<::FPS_Counter>();
+	FPS_Counter->Initialize();
+	FPS_Counter->SetPosition(width - 50.0f, 0.0f);
+	scene.Add(FPS_Counter);
+
+	auto level = std::make_shared<Level>(15,13);
+	level->LoadLevelFromFile("Level.txt");
+	scene.Add(level);
+
+	auto actor = std::make_shared<Actor>();
+	actor->Initialize();
+	actor->SetLevel(level);
+	LoadCommands(actor);
+	scene.Add(actor);
+
+	level->AddPlayer(actor);
 
 }
 
@@ -101,23 +127,25 @@ void dae::Minigin::LoadCommands(const std::shared_ptr<Actor>& actor) const
 
 	//***SETTING DIRECTION***
 	//controllerbutton commands
-	input.SetCommand(ControllerButton::DpadLeft, new TurnLeftCommand(actor));
-	input.SetCommand(ControllerButton::DpadDown, new TurnDownCommand(actor));
-	input.SetCommand(ControllerButton::DpadRight, new TurnRightCommand(actor));
-	input.SetCommand(ControllerButton::DpadUp, new TurnUpCommand(actor));
+	input.SetHoldCommand(ControllerButton::DpadLeft, new TurnLeftCommand(actor));
+	input.SetHoldCommand(ControllerButton::DpadDown, new TurnDownCommand(actor));
+	input.SetHoldCommand(ControllerButton::DpadRight, new TurnRightCommand(actor));
+	input.SetHoldCommand(ControllerButton::DpadUp, new TurnUpCommand(actor));
 
 	//wasd commands
-	input.SetCommand(SDLK_a, new TurnLeftCommand(actor));
-	input.SetCommand(SDLK_s, new TurnDownCommand(actor));
-	input.SetCommand(SDLK_d, new TurnRightCommand(actor));
-	input.SetCommand(SDLK_w, new TurnUpCommand(actor));
+	input.SetHoldCommand(SDL_SCANCODE_A, new TurnLeftCommand(actor));
+	input.SetHoldCommand(SDL_SCANCODE_S, new TurnDownCommand(actor));
+	input.SetHoldCommand(SDL_SCANCODE_D, new TurnRightCommand(actor));
+	input.SetHoldCommand(SDL_SCANCODE_W, new TurnUpCommand(actor));
 
 	//arrow commands
-	input.SetCommand(SDLK_LEFT, new TurnLeftCommand(actor));
-	input.SetCommand(SDLK_DOWN, new TurnDownCommand(actor));
-	input.SetCommand(SDLK_RIGHT, new TurnRightCommand(actor));
-	input.SetCommand(SDLK_UP, new TurnUpCommand(actor));
+	input.SetHoldCommand(SDL_SCANCODE_LEFT, new TurnLeftCommand(actor));
+	input.SetHoldCommand(SDL_SCANCODE_DOWN, new TurnDownCommand(actor));
+	input.SetHoldCommand(SDL_SCANCODE_RIGHT, new TurnRightCommand(actor));
+	input.SetHoldCommand(SDL_SCANCODE_UP, new TurnUpCommand(actor));
 
 	//***ACTIONS***
+	input.SetCommand(ControllerButton::ButtonA, new BombCommand(actor));
+	input.SetCommand(SDLK_SPACE, new BombCommand(actor));
 
 }

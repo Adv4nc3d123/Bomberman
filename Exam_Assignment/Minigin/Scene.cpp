@@ -19,7 +19,10 @@ void dae::Scene::Update(const float deltaTime)
 {
 	for(auto gameObject : m_Objects)
 	{
-		gameObject->Update(deltaTime);
+		gameObject->Update(deltaTime); //update this before the components because the components sometimes need calculations that happen inside here
+
+		gameObject->UpDateMembers(deltaTime);	//2 different update functions, so if you override the update function, 
+												//you don't have to call the parents class update function again to update components and children
 	}
 }
 

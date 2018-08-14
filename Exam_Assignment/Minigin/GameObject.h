@@ -13,6 +13,7 @@ class GameObject : public std::enable_shared_from_this<GameObject> //needed to p
 {
 
 public:
+	void UpDateMembers(const float deltaTime);
 	virtual void Update(const float deltaTime);
 	virtual void Render() const;
 	void AddComponent(const std::shared_ptr<Component>& pComponent);
@@ -45,8 +46,8 @@ private:
 template <class T> inline
 std::shared_ptr<T> GameObject::GetComponent()
 {
-	const type_info& typeInfo = typeid(T);
-	for (const auto& component : m_ComponentVec)
+	const type_info& typeInfo = typeid(T); 
+	for (const auto& component : m_ComponentVec) 
 	{
 		if (typeid(*component) == typeInfo)
 		{

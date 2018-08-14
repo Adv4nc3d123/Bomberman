@@ -3,13 +3,17 @@
 #include "Tile.h"
 #include <SDL.h>
 #include "HitBoxComponent.h"
+#include <fstream>
+#include "ResourceManager.h"
+#include "Actor.h"
 
-Level::Level()
-	: HorTiles(19)
-	, Vertiles(22)
+Level::Level(int horTiles, int verTiles)
+	: HorTiles(horTiles)
+	, Vertiles(verTiles)
 	, vectorSize(HorTiles * Vertiles)
 {	
-	Initialize();
+	m_Tiles.resize(vectorSize);
+	//Initialize();
 }
 
 void Level::Initialize()
@@ -20,7 +24,7 @@ void Level::Initialize()
 	m_Tiles.resize(vectorSize);
 	for (int i = 0; i < HorTiles * Vertiles; ++i)
 	{
-		auto tile = std::make_shared<Tile>(TileState::Dot, i);
+		auto tile = std::make_shared<Tile>(TileState::Open, i);
 		tile->Initialize();
 		int size{ (int)tile->GetSize() };
 		int x{ i  * size % int(HorTiles * size) };
@@ -30,206 +34,28 @@ void Level::Initialize()
 		AddChild(tile);
 	}
 
-	//--Set the correct tiles--
-	//Walls
-	//upper wall
-	for (int i{ 0 }; i < 18; ++i)
-	{
-		m_Tiles[i]->SetState(TileState::Wall);
-	}
-	//left wall
-	for (int i{ HorTiles }; i < HorTiles * Vertiles; i += HorTiles)
-	{
-		m_Tiles[i]->SetState(TileState::Wall);
-	}
-	//right wall
-	for (int i{ HorTiles - 1 }; i < HorTiles * Vertiles; i += HorTiles)
-	{
-		m_Tiles[i]->SetState(TileState::Wall);
-	}
-	//bottom wall
-	for (int i{ HorTiles * (Vertiles - 1) + 1 }; i < HorTiles * Vertiles; ++i)
-	{
-		m_Tiles[i]->SetState(TileState::Wall);
-	}
-
-
-	m_Tiles[19 * 2 + 2]->SetState(TileState::Wall);
-	m_Tiles[19 * 2 + 3]->SetState(TileState::Wall);
-	m_Tiles[19 * 3 + 2]->SetState(TileState::Wall);
-	m_Tiles[19 * 3 + 3]->SetState(TileState::Wall);
-
-	m_Tiles[19 * 2 + 5]->SetState(TileState::Wall);
-	m_Tiles[19 * 2 + 6]->SetState(TileState::Wall);
-	m_Tiles[19 * 2 + 7]->SetState(TileState::Wall);
-	m_Tiles[19 * 3 + 5]->SetState(TileState::Wall);
-	m_Tiles[19 * 3 + 6]->SetState(TileState::Wall);
-	m_Tiles[19 * 3 + 7]->SetState(TileState::Wall);
-
-	m_Tiles[19 + 9]->SetState(TileState::Wall);
-	m_Tiles[19 * 2 + 9]->SetState(TileState::Wall);
-	m_Tiles[19 * 3 + 9]->SetState(TileState::Wall);
-
-	m_Tiles[19 * 2 + 11]->SetState(TileState::Wall);
-	m_Tiles[19 * 2 + 12]->SetState(TileState::Wall);
-	m_Tiles[19 * 2 + 13]->SetState(TileState::Wall);
-	m_Tiles[19 * 3 + 11]->SetState(TileState::Wall);
-	m_Tiles[19 * 3 + 12]->SetState(TileState::Wall);
-	m_Tiles[19 * 3 + 13]->SetState(TileState::Wall);
-
-	m_Tiles[19 * 2 + 15]->SetState(TileState::Wall);
-	m_Tiles[19 * 2 + 16]->SetState(TileState::Wall);
-	m_Tiles[19 * 3 + 15]->SetState(TileState::Wall);
-	m_Tiles[19 * 3 + 16]->SetState(TileState::Wall);
-
-	m_Tiles[19 * 5 + 2]->SetState(TileState::Wall);
-	m_Tiles[19 * 5 + 3]->SetState(TileState::Wall);
-
-	m_Tiles[19 * 5 + 5]->SetState(TileState::Wall);
-	m_Tiles[19 * 6 + 5]->SetState(TileState::Wall);
-	m_Tiles[19 * 7 + 5]->SetState(TileState::Wall);
-	m_Tiles[19 * 7 + 6]->SetState(TileState::Wall);
-	m_Tiles[19 * 7 + 7]->SetState(TileState::Wall);
-	m_Tiles[19 * 8 + 5]->SetState(TileState::Wall);
-	m_Tiles[19 * 9 + 5]->SetState(TileState::Wall);
-
-	m_Tiles[19 * 5 + 7]->SetState(TileState::Wall);
-	m_Tiles[19 * 5 + 8]->SetState(TileState::Wall);
-	m_Tiles[19 * 5 + 9]->SetState(TileState::Wall);
-	m_Tiles[19 * 6 + 9]->SetState(TileState::Wall);
-	m_Tiles[19 * 7 + 9]->SetState(TileState::Wall);
-	m_Tiles[19 * 5 + 10]->SetState(TileState::Wall);
-	m_Tiles[19 * 5 + 11]->SetState(TileState::Wall);
-
-	m_Tiles[19 * 5 + 13]->SetState(TileState::Wall);
-	m_Tiles[19 * 6 + 13]->SetState(TileState::Wall);
-	m_Tiles[19 * 7 + 13]->SetState(TileState::Wall);
-	m_Tiles[19 * 7 + 12]->SetState(TileState::Wall);
-	m_Tiles[19 * 7 + 11]->SetState(TileState::Wall);
-	m_Tiles[19 * 8 + 13]->SetState(TileState::Wall);
-	m_Tiles[19 * 9 + 13]->SetState(TileState::Wall);
-
-	m_Tiles[19 * 5 + 15]->SetState(TileState::Wall);
-	m_Tiles[19 * 5 + 16]->SetState(TileState::Wall);
-
-	m_Tiles[19 * 7 + 1]->SetState(TileState::Wall);
-	m_Tiles[19 * 8 + 1]->SetState(TileState::Wall);
-	m_Tiles[19 * 9 + 1]->SetState(TileState::Wall);
-	m_Tiles[19 * 7 + 2]->SetState(TileState::Wall);
-	m_Tiles[19 * 8 + 2]->SetState(TileState::Wall);
-	m_Tiles[19 * 9 + 2]->SetState(TileState::Wall);
-	m_Tiles[19 * 7 + 3]->SetState(TileState::Wall);
-	m_Tiles[19 * 8 + 3]->SetState(TileState::Wall);
-	m_Tiles[19 * 9 + 3]->SetState(TileState::Wall);
-
-	m_Tiles[19 * 7 + 15]->SetState(TileState::Wall);
-	m_Tiles[19 * 8 + 15]->SetState(TileState::Wall);
-	m_Tiles[19 * 9 + 15]->SetState(TileState::Wall);
-	m_Tiles[19 * 7 + 16]->SetState(TileState::Wall);
-	m_Tiles[19 * 8 + 16]->SetState(TileState::Wall);
-	m_Tiles[19 * 9 + 16]->SetState(TileState::Wall);
-	m_Tiles[19 * 7 + 17]->SetState(TileState::Wall);
-	m_Tiles[19 * 8 + 17]->SetState(TileState::Wall);
-	m_Tiles[19 * 9 + 17]->SetState(TileState::Wall);
-
-	m_Tiles[19 * 11 + 1]->SetState(TileState::Wall);
-	m_Tiles[19 * 12 + 1]->SetState(TileState::Wall);
-	m_Tiles[19 * 13 + 1]->SetState(TileState::Wall);
-	m_Tiles[19 * 11 + 2]->SetState(TileState::Wall);
-	m_Tiles[19 * 12 + 2]->SetState(TileState::Wall);
-	m_Tiles[19 * 13 + 2]->SetState(TileState::Wall);
-	m_Tiles[19 * 11 + 3]->SetState(TileState::Wall);
-	m_Tiles[19 * 12 + 3]->SetState(TileState::Wall);
-	m_Tiles[19 * 13 + 3]->SetState(TileState::Wall);
-
-	m_Tiles[19 * 11 + 5]->SetState(TileState::Wall);
-	m_Tiles[19 * 12 + 5]->SetState(TileState::Wall);
-	m_Tiles[19 * 13 + 5]->SetState(TileState::Wall);
-
-	m_Tiles[19 * 11 + 13]->SetState(TileState::Wall);
-	m_Tiles[19 * 12 + 13]->SetState(TileState::Wall);
-	m_Tiles[19 * 13 + 13]->SetState(TileState::Wall);
-
-	m_Tiles[19 * 9 + 7]->SetState(TileState::Wall);
-	m_Tiles[19 * 10 + 7]->SetState(TileState::Wall);
-	m_Tiles[19 * 11 + 7]->SetState(TileState::Wall);
-	m_Tiles[19 * 9 + 8]->SetState(TileState::Wall);
-	m_Tiles[19 * 9 + 10]->SetState(TileState::Wall);
-	m_Tiles[19 * 9 + 11]->SetState(TileState::Wall);
-	m_Tiles[19 * 10 + 11]->SetState(TileState::Wall);
-	m_Tiles[19 * 11 + 11]->SetState(TileState::Wall);
-	m_Tiles[19 * 11 + 8]->SetState(TileState::Wall);
-	m_Tiles[19 * 11 + 9]->SetState(TileState::Wall);
-	m_Tiles[19 * 11 + 10]->SetState(TileState::Wall);
-
-	m_Tiles[19 * 15 + 2]->SetState(TileState::Wall);
-	m_Tiles[19 * 15 + 3]->SetState(TileState::Wall);
-	m_Tiles[19 * 16 + 3]->SetState(TileState::Wall);
-	m_Tiles[19 * 17 + 3]->SetState(TileState::Wall);
-
-	m_Tiles[19 * 15 + 5]->SetState(TileState::Wall);
-	m_Tiles[19 * 15 + 6]->SetState(TileState::Wall);
-	m_Tiles[19 * 15 + 7]->SetState(TileState::Wall);
-
-	m_Tiles[19 * 13 + 7]->SetState(TileState::Wall);
-	m_Tiles[19 * 13 + 8]->SetState(TileState::Wall);
-	m_Tiles[19 * 13 + 9]->SetState(TileState::Wall);
-	m_Tiles[19 * 14 + 9]->SetState(TileState::Wall);
-	m_Tiles[19 * 15 + 9]->SetState(TileState::Wall);
-	m_Tiles[19 * 13 + 10]->SetState(TileState::Wall);
-	m_Tiles[19 * 13 + 11]->SetState(TileState::Wall);
-
-	m_Tiles[19 * 15 + 11]->SetState(TileState::Wall);
-	m_Tiles[19 * 15 + 12]->SetState(TileState::Wall);
-	m_Tiles[19 * 15 + 13]->SetState(TileState::Wall);
-
-	m_Tiles[19 * 15 + 15]->SetState(TileState::Wall);
-	m_Tiles[19 * 16 + 15]->SetState(TileState::Wall);
-	m_Tiles[19 * 17 + 15]->SetState(TileState::Wall);
-	m_Tiles[19 * 15 + 16]->SetState(TileState::Wall);
-
-	m_Tiles[19 * 11 + 15]->SetState(TileState::Wall);
-	m_Tiles[19 * 12 + 15]->SetState(TileState::Wall);
-	m_Tiles[19 * 13 + 15]->SetState(TileState::Wall);
-	m_Tiles[19 * 11 + 16]->SetState(TileState::Wall);
-	m_Tiles[19 * 12 + 16]->SetState(TileState::Wall);
-	m_Tiles[19 * 13 + 16]->SetState(TileState::Wall);
-	m_Tiles[19 * 11 + 17]->SetState(TileState::Wall);
-	m_Tiles[19 * 12 + 17]->SetState(TileState::Wall);
-	m_Tiles[19 * 13 + 17]->SetState(TileState::Wall);
-
-	m_Tiles[19 * 17 + 1]->SetState(TileState::Wall);
-
-	m_Tiles[19 * 17 + 17]->SetState(TileState::Wall);
-
-	m_Tiles[19 * 19 + 2]->SetState(TileState::Wall);
-	m_Tiles[19 * 19 + 3]->SetState(TileState::Wall);
-	m_Tiles[19 * 19 + 4]->SetState(TileState::Wall);
-	m_Tiles[19 * 19 + 5]->SetState(TileState::Wall);
-	m_Tiles[19 * 18 + 5]->SetState(TileState::Wall);
-	m_Tiles[19 * 17 + 5]->SetState(TileState::Wall);
-	m_Tiles[19 * 19 + 6]->SetState(TileState::Wall);
-	m_Tiles[19 * 19 + 7]->SetState(TileState::Wall);
-
-	m_Tiles[19 * 19 + 11]->SetState(TileState::Wall);
-	m_Tiles[19 * 19 + 12]->SetState(TileState::Wall);
-	m_Tiles[19 * 19 + 13]->SetState(TileState::Wall);
-	m_Tiles[19 * 18 + 13]->SetState(TileState::Wall);
-	m_Tiles[19 * 17 + 13]->SetState(TileState::Wall);
-	m_Tiles[19 * 19 + 14]->SetState(TileState::Wall);
-	m_Tiles[19 * 19 + 15]->SetState(TileState::Wall);
-	m_Tiles[19 * 19 + 16]->SetState(TileState::Wall);
-
-	m_Tiles[19 * 17 + 7]->SetState(TileState::Wall);
-	m_Tiles[19 * 17 + 8]->SetState(TileState::Wall);
-	m_Tiles[19 * 17 + 9]->SetState(TileState::Wall);
-	m_Tiles[19 * 18 + 9]->SetState(TileState::Wall);
-	m_Tiles[19 * 19 + 9]->SetState(TileState::Wall);
-	m_Tiles[19 * 17 + 10]->SetState(TileState::Wall);
-	m_Tiles[19 * 17 + 11]->SetState(TileState::Wall);
-
-	m_Tiles[19 * 16 + 2]->SetState(TileState::Boost);
-	m_Tiles[19 * 16 + 16]->SetState(TileState::Boost);
+	////--Set the correct tiles--
+	////Walls
+	////upper wall
+	//for (int i{ 0 }; i < 18; ++i)
+	//{
+	//	m_Tiles[i]->SetState(TileState::Wall);
+	//}
+	////left wall
+	//for (int i{ HorTiles }; i < HorTiles * Vertiles; i += HorTiles)
+	//{
+	//	m_Tiles[i]->SetState(TileState::Wall);
+	//}
+	////right wall
+	//for (int i{ HorTiles - 1 }; i < HorTiles * Vertiles; i += HorTiles)
+	//{
+	//	m_Tiles[i]->SetState(TileState::Wall);
+	//}
+	////bottom wall
+	//for (int i{ HorTiles * (Vertiles - 1) + 1 }; i < HorTiles * Vertiles; ++i)
+	//{
+	//	m_Tiles[i]->SetState(TileState::Wall);
+	//}
 
 
 }
@@ -295,16 +121,187 @@ int Level::GetActiveTileIndex(const std::shared_ptr<GameObject>& actor)
 		{
 			return tile->GetIndex();
 		}
-		//auto pos = tile->GetTransform().GetPosition();
-
-
-		//if((actorPos.x > pos.x - halfwidth) && (actorPos.x < pos.x + halfwidth) && 
-		//	(actorPos.y > pos.y - halfwidth) && (actorPos.y < pos.y + halfwidth))
-		//{
-		//	return tile->GetIndex();
-		//}
 	}
-	throw std::runtime_error(std::string("Impossible actor location") + SDL_GetError());
+	//throw std::runtime_error(std::string("Impossible actor location") + SDL_GetError());
+	return 0;
+}
+
+void Level::Update(const float deltaTime)
+{
+	int popped = 0;
+
+	for (auto &i : m_ExplosionTimers)
+	{
+		int& tileIndex = i.first;
+		int& actorIndex = i.second.first;
+		float& time = i.second.second;
+		time -= deltaTime;
+		if (time <= 0.0f)
+		{
+			++popped;
+			GetTile(tileIndex)->SetState(TileState::Explosion);
+			GetTile(tileIndex)->SetExplosionState(ExplosionState::center);
+
+			auto radius = m_Players[actorIndex].lock()->GetBombPower();
+
+			auto startIndex = tileIndex;
+			for (int j = 0; j < radius; j++)
+			{
+				auto index = GetUpperIndex(startIndex);
+				auto tile = GetTile(index);
+				if (tile->GetState() == TileState::Open || tile->GetState() == TileState::Explosion)
+				{
+					tile->SetState(TileState::Explosion);
+					if (j < radius - 1)
+						tile->SetExplosionState(ExplosionState::ver);
+					else
+						tile->SetExplosionState(ExplosionState::top);
+				}
+				else if (tile->GetState() == TileState::Breakable)
+				{
+					tile->SetState(TileState::Breaking);
+					break;
+				}
+				else
+					break;
+				startIndex = index;
+			}
+			startIndex = tileIndex;
+			for (int j = 0; j < radius; j++)
+			{
+				auto index = GetRightIndex(startIndex);
+				auto tile = GetTile(index);
+				if (tile->GetState() == TileState::Open || tile->GetState() == TileState::Explosion)
+				{
+					tile->SetState(TileState::Explosion);
+					if (j < radius - 1)
+						tile->SetExplosionState(ExplosionState::hor);
+					else
+						tile->SetExplosionState(ExplosionState::right);
+				}
+				else if (tile->GetState() == TileState::Breakable)
+				{
+					tile->SetState(TileState::Breaking);
+					break;
+				}
+				else
+					break;
+				startIndex = index;
+			}
+			startIndex = tileIndex;
+			for (int j = 0; j < radius; j++)
+			{
+				auto index = GetLeftIndex(startIndex);
+				auto tile = GetTile(index);
+				if (tile->GetState() == TileState::Open || tile->GetState() == TileState::Explosion)
+				{
+					tile->SetState(TileState::Explosion);
+					if (j < radius - 1)
+						tile->SetExplosionState(ExplosionState::hor);
+					else
+						tile->SetExplosionState(ExplosionState::left);
+				}
+				else if (tile->GetState() == TileState::Breakable)
+				{
+					tile->SetState(TileState::Breaking);
+					break;
+				}
+				else
+					break;
+				startIndex = index;
+			}
+			startIndex = tileIndex;
+			for (int j = 0; j < radius; j++)
+			{
+				auto index = GetBottomIndex(startIndex);
+				auto tile = GetTile(index);
+				if (tile->GetState() == TileState::Open || tile->GetState() == TileState::Explosion)
+				{
+					tile->SetState(TileState::Explosion);
+					if (j < radius - 1)
+						tile->SetExplosionState(ExplosionState::ver);
+					else
+						tile->SetExplosionState(ExplosionState::bottom);
+				}
+				else if (tile->GetState() == TileState::Breakable)
+				{
+					tile->SetState(TileState::Breaking);
+					break;
+				}
+				else
+					break;
+				startIndex = index;
+			}
+
+
+		}
+	}
+	for (int i{ 0 }; i < popped; ++i)
+		m_ExplosionTimers.pop_back();
+
+	for(auto &i : m_Tiles)
+	{
+		if (i->GetState() == TileState::Explosion || i->GetState() == TileState::Breaking)
+			if (i->IsFinished())
+				i->SetState(TileState::Open);
+	}
+}
+
+void Level::PlaceBomb(int index, int actorIndex)
+{
+	if (GetTile(index)->GetState() != TileState::Bomb)
+	{
+		m_ExplosionTimers.push_front(std::pair<int, std::pair<int, float> >(index, std::pair<int, float>(actorIndex, 2.0f)));
+		GetTile(index)->SetState(TileState::Bomb);
+	}
+}
+
+void Level::AddPlayer(const std::weak_ptr<Actor>& player)
+{
+	m_Players.push_back(player);
+}
+
+void Level::LoadLevelFromFile(const std::string& file)
+{
+	auto is = dae::ResourceManager::GetInstance().LoadTextFile(file);
+	if (is.fail())
+		std::cout << "File didnt open\n";
+	int i = 0;
+	char c;
+	bool DoNothing = false;
+	while(is.get(c))
+	{
+		DoNothing = false;
+		std::shared_ptr<Tile> tile;
+		switch(c)
+		{
+		case 'W':
+			tile = std::make_shared<Tile>(TileState::Wall, i);
+			break;
+		case 'O':
+			tile = std::make_shared<Tile>(TileState::Open, i);
+			break;
+		case 'B':
+			tile = std::make_shared<Tile>(TileState::Breakable, i);
+			break;
+		default:
+			DoNothing = true;
+			--i;
+			break;
+		}
+		if (!DoNothing)
+		{
+			tile->Initialize();
+			int size{ (int)tile->GetSize() };
+			int x{ i  * size % int(HorTiles * size) };
+			int y{ i * size / int(HorTiles * size) * size };
+			tile->SetPosition((float)x, (float)y);
+			m_Tiles[i] = tile;
+			AddChild(tile);
+		}
+		++i;
+	}
+	is.close();
 }
 
 std::vector<std::shared_ptr<Tile>> Level::GetTiles()

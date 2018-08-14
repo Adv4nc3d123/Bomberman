@@ -38,16 +38,23 @@ bool GameObject::OnOverlap(std::shared_ptr<GameObject> otherType)  //terrible an
 
 GameObject::~GameObject() = default;
 
-void GameObject::Update(const float deltaTime)
+void GameObject::UpDateMembers(const float deltaTime)
 {
-	for (auto component : m_ComponentVec)
+	for(auto child : m_ChildVec)
+	{
+		child->UpDateMembers(deltaTime);
+		child->Update(deltaTime);
+	}
+	for (auto component : m_ComponentVec) //update components has to happen after the gameobjects
 	{
 		component->Update(deltaTime);
 	}
-	for(auto child : m_ChildVec)
-	{
-		child->Update(deltaTime);
-	}
+
+}
+
+void GameObject::Update(const float deltaTime)
+{
+	UNREFERENCED_PARAMETER(deltaTime);
 }
 
 void GameObject::Render() const

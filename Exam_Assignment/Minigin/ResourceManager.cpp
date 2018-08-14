@@ -3,10 +3,12 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
+#include <fstream>
 
 #include "Renderer.h"
 #include "Texture2D.h"
 #include "Font.h"
+
 
 void dae::ResourceManager::Init(std::string&& dataPath)
 {
@@ -44,4 +46,10 @@ std::shared_ptr<dae::Texture2D> dae::ResourceManager::LoadTexture(const std::str
 std::shared_ptr<dae::Font> dae::ResourceManager::LoadFont(const std::string& file, unsigned int size)
 {
 	return std::make_shared<Font>(mDataPath + file, size);
+}
+
+std::ifstream dae::ResourceManager::LoadTextFile(const std::string& file)
+{
+	std::ifstream stream(mDataPath + file);
+	return stream;
 }

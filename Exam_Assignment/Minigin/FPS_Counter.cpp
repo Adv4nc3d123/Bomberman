@@ -21,7 +21,7 @@ void FPS_Counter::Initialize()
 
 void FPS_Counter::Update(const float deltaTime)
 {
-	GameObject::Update(deltaTime);
+	GameObject::UpDateMembers(deltaTime);
 	m_FpsTimer += deltaTime;
 	++m_FpsCount;
 	if (m_FpsTimer >= 1.0f)
